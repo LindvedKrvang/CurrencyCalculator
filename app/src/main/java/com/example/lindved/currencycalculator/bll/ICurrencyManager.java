@@ -6,5 +6,5 @@ package com.example.lindved.currencycalculator.bll;
 
 public interface ICurrencyManager {
 
-    void getCurrency(String fromCurrency, String toCurrency);
+    void getCurrency(String fromCurrency, String toCurrency, double amount);
 }

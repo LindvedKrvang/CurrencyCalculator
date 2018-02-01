@@ -4,6 +4,9 @@
     <string name="select_currency_to">Select currency to:</string>
     <string name="_0">0</string>
     <string name="no_network">Network isn\'t available</string>
+    <string name="two_decimals">#.##</string>
+    <string name="select_different_currencies">Please select two different currencies</string>
+    <string name="enter_valid_number">Please enter a valid number</string>
 
     <string-array name="countries_currency">
         <item>DKK</item>

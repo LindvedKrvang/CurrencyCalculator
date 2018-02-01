@@ -1,9 +1,11 @@
 package com.example.lindved.currencycalculator.bll;
 
-import android.content.Context;
 import android.util.Log;
 
 import com.example.lindved.currencycalculator.gui.IGUI;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 
@@ -25,13 +27,15 @@ public class CurrencyManager implements ICurrencyManager {
     private IGUI mContext;
 
     private String mToCurrency;
+    private double mAmount;
 
     public CurrencyManager(IGUI context){
         mContext = context;
     }
 
-    public void getCurrency(String fromCurrency, String toCurrency){
+    public void getCurrency(String fromCurrency, String toCurrency, double amount){
         mToCurrency = toCurrency;
+        mAmount = amount;
         getCurrencies(fromCurrency);
     }
 
@@ -54,10 +58,27 @@ public class CurrencyManager implements ICurrencyManager {
                 Log.d(TAG, "Response Success");
                 String jsonData = response.body().string();
                 Log.d(TAG, jsonData);
-
+                try {
+                    double currency = extractCurrency(jsonData);
+                    double newValue = calculateNewValue(currency);
+                    mContext.hereIsResult(newValue);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    // TODO RKL: Notify user
+                }
             }
         });
     }
 
+    private double extractCurrency(String jsonData) throws JSONException {
+            JSONObject jsonObject = new JSONObject(jsonData);
+            JSONObject rates = jsonObject.getJSONObject("rates");
+            double rate = rates.getDouble(mToCurrency);
+            Log.d(TAG, "This is the rate: " + rate);
+            return rate;
+    }
 
+    private double calculateNewValue(double currency){
+        return mAmount * currency;
+    }
 }
