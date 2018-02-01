@@ -3,17 +3,20 @@ package com.example.lindved.currencycalculator.gui;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.example.lindved.currencycalculator.R;
 import com.example.lindved.currencycalculator.bll.CurrencyManager;
 import com.example.lindved.currencycalculator.bll.ICurrencyManager;
+
+import java.text.DecimalFormat;
 
 public class MainActivity extends AppCompatActivity implements IGUI {
 
@@ -21,11 +24,10 @@ public class MainActivity extends AppCompatActivity implements IGUI {
 
     private Spinner mFromCurrencySpinner;
     private Spinner mToCurrencySpinner;
+    private EditText mValueText;
+    private TextView mResult;
 
     private ICurrencyManager mCurrencyManager;
-
-    private String mFromCountry;
-    private String mToCountry;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,8 +35,9 @@ public class MainActivity extends AppCompatActivity implements IGUI {
         setContentView(R.layout.activity_main);
 
         initializeSpinners();
+        initializeViews();
+
         mCurrencyManager = new CurrencyManager(this);
-        getCurrencies();
     }
 
     private void initializeSpinners(){
@@ -49,21 +52,21 @@ public class MainActivity extends AppCompatActivity implements IGUI {
         mToCurrencySpinner.setAdapter(adapter);
     }
 
-    public void OnClickTest(View view){
-        Log.d(TAG, "Button Clicked");
+    private void initializeViews(){
+        mValueText = findViewById(R.id.etxtCurrency);
+        mResult = findViewById(R.id.txtResult);
+    }
 
-        //This is only for testing purpose. Must be removed!!
-        mFromCountry = mFromCurrencySpinner.getSelectedItem().toString();
-        mToCountry = mToCurrencySpinner.getSelectedItem().toString();
-        mCurrencyManager.getCurrency(mFromCountry, mToCountry);
+    public void OnClickTest(View view){
+        getCurrencies();
     }
 
     private void getCurrencies(){
         if(isNetworkAvailable()){
-            mFromCountry = mFromCurrencySpinner.getSelectedItem().toString();
-            mToCountry = mToCurrencySpinner.getSelectedItem().toString();
-
-
+            String fromCountry = mFromCurrencySpinner.getSelectedItem().toString();
+            String toCountry = mToCurrencySpinner.getSelectedItem().toString();
+            double value = Double.valueOf(mValueText.getText().toString());
+            mCurrencyManager.getCurrency(fromCountry, toCountry, value);
         }else{
             Log.d(TAG, getString(R.string.no_network));
         }
@@ -80,22 +83,9 @@ public class MainActivity extends AppCompatActivity implements IGUI {
     }
 
     @Override
-    public void hereIsResult(String result) {
-        // TODO RKL: Show result.
-        Log.d(TAG, result);
+    public void hereIsResult(double result) {
+        Log.d(TAG, "This is the new amount: " + result);
+        DecimalFormat formatter = new DecimalFormat(getString(R.string.two_decimals));
+        mResult.setText(formatter.format(result));
     }
-
-//    private class CurrencyGetter extends AsyncTask{
-//
-//        @Override
-//        protected Object doInBackground(Object[] objects) {
-//            mCurrencyManager.getCurrency(mFromCountry, mToCountry);
-//            return null;
-//        }
-//
-//        @Override
-//        protected void onPostExecute(Object o) {
-//            super.onPostExecute(o);
-//        }
-//    }
 }

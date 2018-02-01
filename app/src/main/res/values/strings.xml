@@ -4,6 +4,7 @@
     <string name="select_currency_to">Select currency to:</string>
     <string name="_0">0</string>
     <string name="no_network">Network isn\'t available</string>
+    <string name="two_decimals">#.##</string>
 
     <string-array name="countries_currency">
         <item>DKK</item>
