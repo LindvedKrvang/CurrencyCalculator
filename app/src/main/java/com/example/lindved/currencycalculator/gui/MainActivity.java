@@ -11,6 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.lindved.currencycalculator.R;
 import com.example.lindved.currencycalculator.bll.CurrencyManager;
@@ -20,7 +21,8 @@ import java.text.DecimalFormat;
 
 public class MainActivity extends AppCompatActivity implements IGUI {
 
-    private static final String TAG = "TEST";
+    private static final String TAG_TEST = "TEST";
+    private static final String TAG_ERR = "ERROR";
 
     private Spinner mFromCurrencySpinner;
     private Spinner mToCurrencySpinner;
@@ -65,10 +67,17 @@ public class MainActivity extends AppCompatActivity implements IGUI {
         if(isNetworkAvailable()){
             String fromCountry = mFromCurrencySpinner.getSelectedItem().toString();
             String toCountry = mToCurrencySpinner.getSelectedItem().toString();
-            double value = Double.valueOf(mValueText.getText().toString());
-            mCurrencyManager.getCurrency(fromCountry, toCountry, value);
+            if(!validateEntries(fromCountry, toCountry))
+                return;
+            try{
+                double value = Double.valueOf(mValueText.getText().toString());
+                mCurrencyManager.getCurrency(fromCountry, toCountry, value);
+            }catch (NumberFormatException nfe){
+                createToast(getString(R.string.enter_valid_number));
+                Log.e(TAG_ERR, nfe.getMessage());
+            }
         }else{
-            Log.d(TAG, getString(R.string.no_network));
+            Log.d(TAG_TEST, getString(R.string.no_network));
         }
     }
 
@@ -82,10 +91,23 @@ public class MainActivity extends AppCompatActivity implements IGUI {
         return isAvailable;
     }
 
+    private boolean validateEntries(String fromCountry, String toCountry){
+        if(fromCountry.equals(toCountry)){
+            createToast(getString(R.string.select_different_currencies));
+            return false;
+        }
+
+        return true;
+    }
+
     @Override
     public void hereIsResult(double result) {
-        Log.d(TAG, "This is the new amount: " + result);
+        Log.d(TAG_TEST, "This is the new amount: " + result);
         DecimalFormat formatter = new DecimalFormat(getString(R.string.two_decimals));
         mResult.setText(formatter.format(result));
+    }
+
+    private void createToast(String message){
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
     }
 }
