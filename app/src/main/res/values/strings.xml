@@ -7,6 +7,12 @@
     <string name="two_decimals">#.##</string>
     <string name="select_different_currencies">Please select two different currencies</string>
     <string name="enter_valid_number">Please enter a valid number</string>
+    <string name="Rate">Rate</string>
+    <string name="value">Value</string>
+    <string name="from_country">FromCountry</string>
+    <string name="to_country">ToCountry</string>
+    <string name="exchange_rate_is">The exchange rate is:</string>
+    <string name="result">Result</string>
 
     <string-array name="countries_currency">
         <item>DKK</item>

@@ -28,20 +28,23 @@ public class MainActivity extends AppCompatActivity implements IGUI {
     private Spinner mFromCurrencySpinner;
     private Spinner mToCurrencySpinner;
     private EditText mValueText;
-    private TextView mResult;
+    private TextView mResultText;
     private TextView mExchangeRate;
     private TextView mConvertText;
 
     private ICurrencyManager mCurrencyManager;
+    private DecimalFormat mFormatter;
+
     private double mRate;
     private double mValue;
-    private DecimalFormat formatter;
+    private double mResult;
     private String mFromCountry;
     private String mToCountry;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if(isLandscape()){
             setContentView(R.layout.activity_main_landscape);
             initializeLandscapeViews();
@@ -49,11 +52,28 @@ public class MainActivity extends AppCompatActivity implements IGUI {
         else
             setContentView(R.layout.activity_main);
 
+        mCurrencyManager = new CurrencyManager(this);
+        mFormatter = new DecimalFormat(getString(R.string.two_decimals));
+
         initializeSpinners();
         initializeViews();
 
-        mCurrencyManager = new CurrencyManager(this);
-        formatter = new DecimalFormat(getString(R.string.two_decimals));
+        loadSavedInstanceState(savedInstanceState);
+
+        updateUIElements();
+    }
+
+    private void loadSavedInstanceState(Bundle state){
+        if(state == null){
+            mFromCountry = mFromCurrencySpinner.getSelectedItem().toString();
+            mToCountry = mToCurrencySpinner.getSelectedItem().toString();
+            return;
+        }
+        mRate = state.getDouble(getString(R.string.Rate));
+        mValue = state.getDouble(getString(R.string.value));
+        mResult = state.getDouble(getString(R.string.result));
+        mFromCountry = state.getString(getString(R.string.from_country));
+        mToCountry = state.getString(getString(R.string.to_country));
     }
 
     private void initializeLandscapeViews(){
@@ -75,10 +95,10 @@ public class MainActivity extends AppCompatActivity implements IGUI {
 
     private void initializeViews(){
         mValueText = findViewById(R.id.etxtCurrency);
-        mResult = findViewById(R.id.txtResult);
+        mResultText = findViewById(R.id.txtResult);
     }
 
-    public void OnClickTest(View view){
+    public void OnCalculateButtonClick(View view){
         getCurrencies();
     }
 
@@ -100,6 +120,7 @@ public class MainActivity extends AppCompatActivity implements IGUI {
             }
         }else{
             Log.d(TAG_TEST, getString(R.string.no_network));
+            createToast(getString(R.string.no_network));
         }
     }
 
@@ -140,12 +161,19 @@ public class MainActivity extends AppCompatActivity implements IGUI {
     @Override
     public void hereIsResult(double result, double exchangeRate) {
         Log.d(TAG_TEST, "This is the new amount: " + result);
+        mResult = result;
         mRate = exchangeRate;
+        updateUIElements();
+    }
 
-        String resultText = formatter.format(result) + " " + mToCountry;
-        mResult.setText(resultText);
-        if(isLandscape()){
-            String exchangeText = "The exchange rate is: " + formatter.format(mRate);
+    /**
+     * Updates all the views in the GUI with their respective information.
+     */
+    private void updateUIElements(){
+        String resultText = mFormatter.format(mResult) + " " + mToCountry;
+        mResultText.setText(resultText);
+        if(isLandscape()) {
+            String exchangeText = getString(R.string.exchange_rate_is)+ " " + mFormatter.format(mRate);
             mExchangeRate.setText(exchangeText);
             String convertText = mValue + " " + mFromCountry + " is:";
             mConvertText.setText(convertText);
@@ -167,5 +195,19 @@ public class MainActivity extends AppCompatActivity implements IGUI {
     private boolean isLandscape(){
         Configuration config = getResources().getConfiguration();
         return config.orientation == Configuration.ORIENTATION_LANDSCAPE;
+    }
+
+    /**
+     * Saves all the necessary information for the activity to restart without loss of  valuable information.
+     * @param outState
+     */
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putDouble(getString(R.string.Rate), mRate);
+        outState.putDouble(getString(R.string.value), mValue);
+        outState.putDouble(getString(R.string.result), mResult);
+        outState.putString(getString(R.string.from_country), mFromCountry);
+        outState.putString(getString(R.string.to_country), mToCountry);
     }
 }
