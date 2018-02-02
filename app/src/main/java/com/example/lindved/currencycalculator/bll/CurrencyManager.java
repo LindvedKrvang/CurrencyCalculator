@@ -39,6 +39,10 @@ public class CurrencyManager implements ICurrencyManager {
         getCurrencies(fromCurrency);
     }
 
+    /**
+     * Sends a request to Fixer.io api for the latest exchangeRates.
+     * @param fromCurrency
+     */
     private void getCurrencies(String fromCurrency){
 
         OkHttpClient client = new OkHttpClient();
@@ -53,15 +57,21 @@ public class CurrencyManager implements ICurrencyManager {
 
             }
 
+            /**
+             * Extract the exchangeRate and calculate the new currency.
+             * @param call
+             * @param response
+             * @throws IOException
+             */
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 Log.d(TAG, "Response Success");
                 String jsonData = response.body().string();
                 Log.d(TAG, jsonData);
                 try {
-                    double currency = extractCurrency(jsonData);
-                    double newValue = calculateNewValue(currency);
-                    mContext.hereIsResult(newValue);
+                    double rate = extractRate(jsonData);
+                    double newValue = calculateNewValue(rate);
+                    mContext.hereIsResult(newValue, rate);
                 } catch (JSONException e) {
                     e.printStackTrace();
                     // TODO RKL: Notify user
@@ -70,7 +80,13 @@ public class CurrencyManager implements ICurrencyManager {
         });
     }
 
-    private double extractCurrency(String jsonData) throws JSONException {
+    /**
+     * Extracts the rate for the currency from the parsed jsonData.
+     * @param jsonData
+     * @return
+     * @throws JSONException
+     */
+    private double extractRate(String jsonData) throws JSONException {
             JSONObject jsonObject = new JSONObject(jsonData);
             JSONObject rates = jsonObject.getJSONObject("rates");
             double rate = rates.getDouble(mToCurrency);
@@ -78,6 +94,11 @@ public class CurrencyManager implements ICurrencyManager {
             return rate;
     }
 
+    /**
+     * Returns how much money the fromCurrency is worth in the toCurrency.
+     * @param currency
+     * @return
+     */
     private double calculateNewValue(double currency){
         return mAmount * currency;
     }

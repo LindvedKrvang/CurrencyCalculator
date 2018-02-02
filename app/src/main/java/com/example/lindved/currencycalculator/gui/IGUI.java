@@ -6,5 +6,5 @@ package com.example.lindved.currencycalculator.gui;
 
 public interface IGUI {
 
-    void hereIsResult(double result);
+    void hereIsResult(double result, double exchangeRate);
 }
