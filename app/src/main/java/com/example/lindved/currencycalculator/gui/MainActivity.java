@@ -1,6 +1,7 @@
 package com.example.lindved.currencycalculator.gui;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.v7.app.AppCompatActivity;
@@ -34,7 +35,10 @@ public class MainActivity extends AppCompatActivity implements IGUI {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        if(isLandscape())
+            setContentView(R.layout.activity_main_landscape);
+        else
+            setContentView(R.layout.activity_main);
 
         initializeSpinners();
         initializeViews();
@@ -109,5 +113,10 @@ public class MainActivity extends AppCompatActivity implements IGUI {
 
     private void createToast(String message){
         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+    }
+
+    private boolean isLandscape(){
+        Configuration config = getResources().getConfiguration();
+        return config.orientation == config.ORIENTATION_LANDSCAPE;
     }
 }
