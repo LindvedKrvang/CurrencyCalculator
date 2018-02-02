@@ -70,48 +70,46 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <TextView
-        android:id="@+id/txtResult"
+    <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="@string/_0"
-        android:textAlignment="center"
-        android:textSize="30sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/spnToCurrency"
-        app:layout_constraintTop_toBottomOf="@+id/txtConvert" />
-
-    <TextView
-        android:id="@+id/txtExchangeRate"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:text="Exchange Rate"
-        android:textAlignment="center"
-        android:textSize="14sp"
+        android:orientation="vertical"
         app:layout_constraintBottom_toTopOf="@+id/btnCalculate"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/etxtCurrency"
-        app:layout_constraintTop_toBottomOf="@+id/txtResult"
-        app:layout_constraintVertical_bias="0.00999999" />
+        app:layout_constraintStart_toEndOf="@id/etxtCurrency"
+        app:layout_constraintTop_toTopOf="parent">
 
-    <TextView
-        android:id="@+id/txtConvert"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="60dp"
-        android:text='"X" currency is:'
-        android:textAlignment="center"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/etxtCurrency"
-        app:layout_constraintTop_toTopOf="parent" />
+        <TextView
+            android:id="@+id/txtExchangeRate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Exchange Rate"
+            android:textAlignment="center"
+            android:textSize="14sp"
+            tools:layout_editor_absoluteX="41dp"
+            tools:layout_editor_absoluteY="227dp" />
+
+        <TextView
+            android:id="@+id/txtResult"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/_0"
+            android:textAlignment="center"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            tools:layout_editor_absoluteX="154dp"
+            tools:layout_editor_absoluteY="186dp" />
+
+        <TextView
+            android:id="@+id/txtConvert"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text='"X" currency is:'
+            android:textAlignment="center"
+            tools:layout_editor_absoluteX="32dp"
+            tools:layout_editor_absoluteY="186dp" />
+    </LinearLayout>
 </android.support.constraint.ConstraintLayout>
